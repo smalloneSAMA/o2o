@@ -98,6 +98,13 @@
       <artifactId>commons-collections</artifactId>
       <version>3.2.2</version>
     </dependency>
+    <!--文件快速读取类-->
+    <dependency>
+      <groupId>org.apache.directory.studio</groupId>
+      <artifactId>org.apache.commons.io</artifactId>
+      <version>2.4</version>
+    </dependency>
+
 
 
     <!--Mybatis-->
@@ -123,6 +130,13 @@
       <artifactId>c3p0</artifactId>
       <version>0.9.5.2</version>
     </dependency>
+    <!--图片处理-->
+    <dependency>
+      <groupId>net.coobird</groupId>
+      <artifactId>thumbnailator</artifactId>
+      <version>0.4.8</version>
+    </dependency>
+
 
     <dependency>
       <groupId>junit</groupId>
