@@ -49,7 +49,7 @@ public class ImageUtiil {
         }
     }
 
-    public static String generateThumbnail(MultipartFile thumbnail, String targetAddr){
+    public static String generateThumbnail(MultipartFile thumbnail,String targetAddr){
         String realFileName = getRandomFileName();
         String extension = getFileExtension(thumbnail);
         makeDirPath(targetAddr);
@@ -99,6 +99,27 @@ public class ImageUtiil {
         if(!dirPath.exists()){
             dirPath.mkdirs();
         }
+    }
+
+    /**
+     * storePath是文件路劲还是目录路径，
+     * 如果是storePath是文件路径则删除该文件，
+     * 如果storePath是目录路径则删除该目录下的所有文件
+     * @param storePath
+     */
+    public static void deleteFileOrPath(String storePath){
+        File fileOrPath = new File(PathUtil.getImgBasePath()+storePath);
+        if(fileOrPath.exists()){
+            if(fileOrPath.isDirectory()){
+                File files[] = fileOrPath.listFiles();
+                for(int i =0;i<fileOrPath.length(); i++){
+                    files[i].delete();
+                }
+                fileOrPath.delete();
+            }
+        }
+
+
     }
 
 

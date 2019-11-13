@@ -47,6 +47,7 @@ public class ShopDaoTest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void updateShop() {
         Shop shop = new Shop();
         shop.setShopId(1L);
@@ -59,5 +60,13 @@ public class ShopDaoTest extends BaseTest {
 
 
 
+    }
+
+    @Test
+    public void queryByShopId() {
+        long shopId = 1;
+        Shop shop = shopDao.queryByShopId(shopId);
+        System.out.println("area_id: " + shop.getArea().getAreaId());
+        System.out.println("area_name: " + shop.getArea().getAreaName());
     }
 }

@@ -2,6 +2,7 @@ package com.smallone.o2o.service.impl;
 
 import com.smallone.o2o.dao.ShopDao;
 import com.smallone.o2o.dto.ShopExecution;
+import com.smallone.o2o.dto.ShopOperationExecution;
 import com.smallone.o2o.entity.Shop;
 import com.smallone.o2o.enums.ShopStateEnum;
 import com.smallone.o2o.exceptions.ShopOperationException;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Date;
 
 /**
@@ -26,9 +28,12 @@ public class ShopServiceImpl implements ShopService {
     @Autowired
     private ShopDao shopDao;
 
+
+
+
     @Override
     @Transactional
-    public ShopExecution addShop(Shop shop, MultipartFile shopImg) {
+    public ShopExecution addShop(Shop shop, MultipartFile shopImg) throws ShopOperationException {
         //空值判断
         if(shop == null)
             return new ShopExecution(ShopStateEnum.NULL_SHOP);
@@ -64,6 +69,8 @@ public class ShopServiceImpl implements ShopService {
         return new ShopExecution(ShopStateEnum.CHECK,shop);
     }
 
+
+
     private void addShopImg(Shop shop, MultipartFile shopImg) {
         //获取shop图片目录的相对值路径
         String dest = PathUtil.getShopImagePath(shop.getShopId());
@@ -71,4 +78,45 @@ public class ShopServiceImpl implements ShopService {
         String shopImgAddr = ImageUtiil.generateThumbnail(shopImg,dest);
         shop.setShopImg(shopImgAddr);
     }
+
+    @Override
+    public Shop getByShopId(Long shopId) {
+        return shopDao.queryByShopId(shopId);
+    }
+
+    @Override
+    @Transactional
+    public ShopExecution modifyShop(Shop shop, MultipartFile shopImg) throws ShopOperationException {
+        // 判断店铺是否存在
+        if(shop == null  ||  shop.getShopId() == null){
+            return  new ShopExecution(ShopStateEnum.NULL_SHOP);
+        }else {
+            //判断是否要处理图片
+            try {
+                if(shopImg != null){
+                    Shop tempShop = shopDao.queryByShopId(shop.getShopId());
+                    if(tempShop.getShopImg() != null){
+                        //删除原先图片
+                        ImageUtiil.deleteFileOrPath(tempShop.getShopImg());
+                    }
+                    //添加新照片
+                    addShopImg(shop,shopImg);
+                    //2.更新店铺信息
+                    shop.setLastEditTime(new Date());
+                    int effectedNum = shopDao.updateShop(shop);
+                    if(effectedNum <= 0){
+                        return  new ShopExecution(ShopStateEnum.INNER_ERROR);
+                    }else {
+                        shop = shopDao.queryByShopId(shop.getShopId());
+                        return  new ShopExecution(ShopStateEnum.SUCCESS,shop);
+                    }
+                }
+            }catch (Exception e){
+                throw  new ShopOperationException("modifyShop error: " + e.getMessage());
+            }
+        }
+        return new ShopExecution(ShopStateEnum.SUCCESS,shop);
+    }
+
+
 }

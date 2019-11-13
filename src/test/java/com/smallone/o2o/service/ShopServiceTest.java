@@ -62,6 +62,16 @@ public class ShopServiceTest extends BaseTest{
         System.out.println("ShopExecution.stateInfo" + se.getStateInfo());
     }
 
+    @Test
+    public void modifyShop() throws IOException {
+        Shop shop = new Shop();
+        shop.setShopId(1l);
+        shop.setShopName("修改后的店铺名称");
+        String filePath = "E:\\学习\\java\\项目学习\\o2o\\src\\main\\resources\\image\\gakki2.jpg";
+        ShopExecution shopExecution = shopService.modifyShop(shop,path2MultipartFile(filePath));
+        System.out.println("新图片地址：" + shopExecution.getShop().getShopImg());
+    }
+
     /**
      * filePath to MultipartFile
      *
