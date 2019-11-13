@@ -2,28 +2,34 @@ package com.smallone.o2o.web.shopadmin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smallone.o2o.dto.ShopExecution;
+import com.smallone.o2o.entity.Area;
 import com.smallone.o2o.entity.PersonInfo;
 import com.smallone.o2o.entity.Shop;
+import com.smallone.o2o.entity.ShopCategory;
 import com.smallone.o2o.enums.ShopStateEnum;
+import com.smallone.o2o.service.AreaService;
+import com.smallone.o2o.service.ShopCategoryService;
 import com.smallone.o2o.service.ShopService;
+import com.smallone.o2o.util.CodeUtil;
 import com.smallone.o2o.util.HttpServletRequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import javax.management.modelmbean.ModelMBean;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * 商铺管理
@@ -36,12 +42,43 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class ShopManagementController {
     @Autowired
     private ShopService shopService;
+    @Autowired
+    private ShopCategoryService shopCategoryService;
+    @Autowired
+    private AreaService areaService;
 
-    @RequestMapping(value="/registershop",method = POST)
+    @RequestMapping(value = "/getshopinitinfo",method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String, Object> getShopInitInfo(){
+        Map<String,Object> modelMap = new HashMap<>();
+        List<ShopCategory> shopCategoryList = new ArrayList<>();
+        List<Area> areaList = new ArrayList<>();
+        try {
+            shopCategoryList = shopCategoryService.getShopCategoryList(new ShopCategory());
+            areaList = areaService.getAreaList();
+            modelMap.put("shopCategoryList",shopCategoryList);
+            modelMap.put("areaList",areaList);
+            modelMap.put("success",true);
+        }catch (Exception e){
+            modelMap.put("success",false);
+            modelMap.put("errMsg",e.getMessage());
+        }
+        return modelMap;
+
+    }
+
+
+    @RequestMapping(value="/registershop",method = RequestMethod.POST)
     private Map<String,Object> registerShop(HttpServletRequest request){
         Map<String,Object> modelMap = new HashMap<>();
+        if(!CodeUtil.checkVerifyCode(request)){
+            modelMap.put("success",false);
+            modelMap.put("errMsg","输入了错误的验证码");
+            return modelMap;        }
         //1.接收并且转化相应参数，包括店铺信息及图片
         String shopStr = HttpServletRequestUtil.getString(request,"shopStr");
+        //shopStr.substring(1,shopStr.length()-1);
+        System.out.println(shopStr);
         ObjectMapper mapper = new ObjectMapper();
         Shop shop = null;
         try {
@@ -72,7 +109,7 @@ public class ShopManagementController {
             owner.setUserId(1L);
             shop.setOwner(owner);
             ShopExecution se = shopService.addShop(shop,shopImg);
-            if(se.getState() != ShopStateEnum.CHECK.getState()){
+            if(se.getState() == ShopStateEnum.CHECK.getState()){
                 modelMap.put("success",true);
             }else {
                 modelMap.put("success",false);

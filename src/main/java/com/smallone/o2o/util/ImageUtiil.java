@@ -58,7 +58,7 @@ public class ImageUtiil {
         try {
             Thumbnails.of(thumbnail.getInputStream()).size(200,200)
                     .watermark(Positions.BOTTOM_RIGHT,
-                            ImageIO.read(new File(basePath+"/image/gakki2.jpg")),
+                            ImageIO.read(new File(basePath + "watermark.jpg")),
                             0.25f).outputQuality(0.8).toFile(dest);
         }catch (IOException e){
             e.printStackTrace();

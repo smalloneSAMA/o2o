@@ -20,7 +20,7 @@
 
         <!-- c3p0连接池的私有属性 -->
         <!-- 每60秒检查连接池中的所有空闲连接 -->
-        <property name="idleConnectionTestPeriod" value="60"/>
+        <!--<property name="idleConnectionTestPeriod" value="60"/>-->
         <!-- 初始化时获取五个连接，该值在maxPoolSize和minPoolSize之间取值 -->
         <property name="initialPoolSize" value="5"/>
         <property name="maxPoolSize" value="30" />
