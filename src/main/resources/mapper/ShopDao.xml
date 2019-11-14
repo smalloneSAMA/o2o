@@ -29,6 +29,93 @@
             <result column="name" property="name"/>
         </association>
     </resultMap>
+<!--获取店铺列表-->
+    <select id="queryShopList" resultMap="shopMap">
+        SELECT
+        s.shop_id,
+        s.shop_name,
+        s.shop_description,
+        s.shop_address,
+        s.phone,
+        s.shop_img,
+        s.priority,
+        s.create_time,
+        s.last_edit_time,
+        s.enable_status,
+        s.advice,
+        a.area_id,
+        a.area_name,
+        sc.shop_category_id,
+        sc.shop_category_name
+        FROM
+        tb_shop s,
+        tb_area a,
+        tb_shop_category sc
+        <where>
+            <if test="shopCondition.shopCategory != null
+            and shopCondititon.shopCategory.shopCategoryId != null">
+                and s.shop_category_id =
+                #{shopCondition.shopCategory.shopCategoryId}
+            </if>
+            <if test="shopCondition.area != null
+            and shopCondititon.area.areaId != null">
+                and s.area_id =
+                #{shopCondition.area.area_id}
+            </if>
+            <if test="shopCondition.shopName != null">
+                and s.shop_name like '%#{shopCondition.shopName}%'
+            </if>
+            <if test="shopCondition.enableStatus != null">
+                and s.enable_status = #{shopCondition.enableStatus}
+            </if>
+            <if test="shopCondition.owner != null
+            and shopCondition.owner.userId != null">
+                and s.owner_id = #{shopCondition.owner.userId}
+            </if>
+            AND
+            s.area_id = a.area_id
+            AND
+            s.shop_category_id = sc.shop_category_id
+        </where>
+        ORDER BY
+        s.priority DESC
+        LIMIT #{rowIndex},#{pageSize};
+    </select>
+
+    <select id="queryShopCount" resultType="int">
+        SELECT count(1)
+        FROM
+        tb_shop s,
+        tb_area a,
+        tb_shop_category sc
+        <where>
+            <if test="shopCondition.shopCategory != null
+            and shopCondititon.shopCategory.shopCategoryId != null">
+                and s.shop_category_id =
+                #{shopCondition.shopCategory.shopCategoryId}
+            </if>
+            <if test="shopCondition.area != null
+            and shopCondititon.area.areaId != null">
+                and s.area_id =
+                #{shopCondition.area.area_id}
+            </if>
+            <if test="shopCondition.shopName != null">
+                and s.shop_name like '%#{shopCondition.shopName}%'
+            </if>
+            <if test="shopCondition.enableStatus != null">
+                and s.enable_status = #{shopCondition.enableStatus}
+            </if>
+            <if test="shopCondition.owner != null
+            and shopCondition.owner.userId != null">
+                and s.owner_id = #{shopCondition.owner.userId}
+            </if>
+            AND
+            s.area_id = a.area_id
+            AND
+            s.shop_category_id = sc.shop_category_id
+        </where>
+    </select>
+
     <select id="queryByShopId" resultMap="shopMap" parameterType="Long">
         SELECT
         s.shop_id,
@@ -56,8 +143,6 @@
         s.shop_category_id = sc.shop_category_id
         AND
         s.shop_id = #{shopId}
-
-
     </select>
 
 

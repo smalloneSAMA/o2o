@@ -30,11 +30,11 @@ public class HttpServletRequestUtil {
      * @param key
      * @return
      */
-    public static long getLong(HttpServletRequest request,String key){
+    public static Long getLong(HttpServletRequest request,String key){
         try {
             return Long.valueOf(request.getParameter(key));
         }catch (Exception e){
-            return -1;
+            return -1L;
         }
     }
     /**

@@ -1,16 +1,14 @@
-package com.smallone.o2o.service;
+package com.smallone.o2o.service.impl;
 
-import com.smallone.o2o.BaseTest;
-import com.smallone.o2o.SmalloneVFS;
 import com.smallone.o2o.dto.ShopExecution;
 import com.smallone.o2o.entity.Area;
 import com.smallone.o2o.entity.PersonInfo;
-import org.apache.commons.io.IOUtils;
 import com.smallone.o2o.entity.Shop;
 import com.smallone.o2o.entity.ShopCategory;
 import com.smallone.o2o.enums.ShopStateEnum;
-import org.apache.ibatis.io.DefaultVFS;
-import org.apache.ibatis.io.VFS;
+import com.smallone.o2o.service.ShopService;
+import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
@@ -20,14 +18,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
 /**
  * @author smallone
- * @created 2019--11--12--17:40
+ * @created 2019--11--14--18:32
  */
-public class ShopServiceTest extends BaseTest{
+public class ShopServiceImplTest {
+
     @Autowired
     private ShopService shopService;
     /*static {
@@ -36,6 +36,21 @@ public class ShopServiceTest extends BaseTest{
 
 
     @Test
+    public void getShopList() {
+        Shop shopCondition = new Shop();
+        ShopCategory sc = new ShopCategory();
+        sc.setShopCategoryId(1L);
+        //PersonInfo owner = new PersonInfo();
+        //owner.setUserId(1L);
+        //shopCondition.setOwner(owner);
+        shopCondition.setShopCategory(sc);
+        ShopExecution se =  shopService.getShopList(shopCondition,1,3);
+        System.out.println("店铺列表数： " + se.getShopList().size());
+        System.out.println("店铺综述： " + se.getCount());
+    }
+
+    @Test
+    @Ignore
     public void addShop() throws IOException {
         Shop shop = new Shop();
         PersonInfo owner = new PersonInfo();
@@ -63,6 +78,7 @@ public class ShopServiceTest extends BaseTest{
     }
 
     @Test
+    @Ignore
     public void modifyShop() throws IOException {
         Shop shop = new Shop();
         shop.setShopId(1l);

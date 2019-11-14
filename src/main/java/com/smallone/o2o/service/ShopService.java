@@ -18,6 +18,15 @@ import java.io.InputStream;
 public interface ShopService {
 
     /**
+     *  根据ShopCondition分页查询店铺，可输入的条件有：店铺名（模糊），店铺类别，区域Id, owner
+     * @param shopCondition
+     * @param pageIndex  从第几行开始取数据
+     * @param pageSize  返回的条数
+     * @return
+     */
+      ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize);
+
+    /**
      * 注册店铺信息，包括图片处理
      * @param shop
      * @param shopImg

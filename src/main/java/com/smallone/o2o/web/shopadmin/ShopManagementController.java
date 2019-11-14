@@ -47,6 +47,29 @@ public class ShopManagementController {
     @Autowired
     private AreaService areaService;
 
+    @RequestMapping(value = "/getshopbyid",method = RequestMethod.GET)
+    @ResponseBody
+    private  Map<String ,Object> getShopById(HttpServletRequest request ){
+            Map<String ,Object> modelMap = new HashMap<>();
+            Long shopId = HttpServletRequestUtil.getLong(request,"shopId");
+            if(shopId> -1){
+                try {
+                    Shop shop = shopService.getByShopId(shopId);
+                    List<Area> areaList = areaService.getAreaList();
+                    modelMap.put("shop",shop);
+                    modelMap.put("areaList",areaList);
+                    modelMap.put("success",true);
+                }catch (Exception e){
+                    modelMap.put("success",false);
+                    modelMap.put("areaList",e.toString());
+                }
+            }else {
+                modelMap.put("success",false);
+                modelMap.put("errMst","empty shopId");
+            }
+            return  modelMap;
+    }
+
     @RequestMapping(value = "/getshopinitinfo",method = RequestMethod.GET)
     @ResponseBody
     private Map<String, Object> getShopInitInfo(){
@@ -69,6 +92,7 @@ public class ShopManagementController {
 
 
     @RequestMapping(value="/registershop",method = RequestMethod.POST)
+    @ResponseBody
     private Map<String,Object> registerShop(HttpServletRequest request){
         Map<String,Object> modelMap = new HashMap<>();
         if(!CodeUtil.checkVerifyCode(request)){
@@ -125,6 +149,66 @@ public class ShopManagementController {
         }
 
     }
+
+    /**
+     * 修改店铺
+     *
+     * @param request
+     * @return
+     */
+
+    @RequestMapping(value="/modifyshop",method = RequestMethod.POST)
+    @ResponseBody
+    private Map<String,Object> modifyShop(HttpServletRequest request){
+        Map<String,Object> modelMap = new HashMap<>();
+        if(!CodeUtil.checkVerifyCode(request)){
+            modelMap.put("success",false);
+            modelMap.put("errMsg","输入了错误的验证码");
+            return modelMap;
+        }
+        //1.接收并且转化相应参数，包括店铺信息及图片
+        String shopStr = HttpServletRequestUtil.getString(request,"shopStr");
+        //shopStr.substring(1,shopStr.length()-1);
+        System.out.println(shopStr);
+        ObjectMapper mapper = new ObjectMapper();
+        Shop shop = null;
+        try {
+            //使用jackson-databind
+            shop = mapper.readValue(shopStr,Shop.class);
+        }catch (Exception e){
+            modelMap.put("success",false);
+            modelMap.put("errMsg",e.getMessage());
+            return modelMap;
+        }
+        // 获取图片文件流
+        MultipartHttpServletRequest multipartRequest = null;
+        MultipartFile shopImg = null;
+        MultipartResolver multipartResolver =  new CommonsMultipartResolver(
+                request.getSession().getServletContext());
+
+        if(multipartResolver.isMultipart(request)){
+            MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+            shopImg = multipartHttpServletRequest.getFile("shopImg");
+        }
+        //2.修改店铺信息
+        if(shop != null && shop.getShopId() > 0){
+            ShopExecution se = shopService.modifyShop(shop,shopImg);
+            if(se.getState() == ShopStateEnum.CHECK.getState()){
+                modelMap.put("success",true);
+            }else {
+                modelMap.put("success",false);
+                modelMap.put("errMsg", se.getStateInfo());
+            }
+            return modelMap;
+        }else {
+            modelMap.put("success",false);
+            modelMap.put("errMsg","没有该shopId");
+            return modelMap;
+        }
+
+    }
+
+
 
     /**
      * 私有方法，用于转换CommonsMultipartFile为File
