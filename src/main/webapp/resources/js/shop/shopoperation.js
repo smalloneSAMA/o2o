@@ -18,8 +18,14 @@ $(function () {
         $('#kaptcha_img').click();
     }else {
         // 如果是修改信息，则传入shopId进行修改
+        modifySubmit();
         getShopInfo(shopId);
         $('#kaptcha_img').click();
+    }
+
+    function modifySubmit(){
+        var obj = document.getElementById("submit");
+        obj.innerText = "修改";
     }
 
     // 修改店铺信息
