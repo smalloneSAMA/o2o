@@ -15,7 +15,7 @@ public interface ShopDao {
 
     /**
      *  分页查询店铺，可输入的条件有：店铺名（模糊），店铺类别，区域Id, owner
-     * @param shopCondition
+     * @param shopCondition 查询条件
      * @param rowIndex  从第几行开始取数据
      * @param pageSize  返回的条数
      * @return
@@ -24,7 +24,7 @@ public interface ShopDao {
                              @Param("rowIndex") int rowIndex,@Param("pageSize") int pageSize);
 
     /**
-     * 返回queryShopList综述
+     * 返回queryShopList总数
      * @param shopCondition
      * @return
      */

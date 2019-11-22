@@ -1,5 +1,6 @@
 package com.smallone.o2o.service.impl;
 
+import com.smallone.o2o.BaseTest;
 import com.smallone.o2o.dto.ShopExecution;
 import com.smallone.o2o.entity.Area;
 import com.smallone.o2o.entity.PersonInfo;
@@ -26,7 +27,7 @@ import static org.junit.Assert.*;
  * @author smallone
  * @created 2019--11--14--18:32
  */
-public class ShopServiceImplTest {
+public class ShopServiceImplTest extends BaseTest {
 
     @Autowired
     private ShopService shopService;
@@ -44,9 +45,9 @@ public class ShopServiceImplTest {
         //owner.setUserId(1L);
         //shopCondition.setOwner(owner);
         shopCondition.setShopCategory(sc);
-        ShopExecution se =  shopService.getShopList(shopCondition,1,3);
+        ShopExecution se =  shopService.getShopList(shopCondition,3,6);
         System.out.println("店铺列表数： " + se.getShopList().size());
-        System.out.println("店铺综述： " + se.getCount());
+        System.out.println("店铺总数： " + se.getCount());
     }
 
     @Test
@@ -81,7 +82,7 @@ public class ShopServiceImplTest {
     @Ignore
     public void modifyShop() throws IOException {
         Shop shop = new Shop();
-        shop.setShopId(1l);
+        shop.setShopId(12L);
         shop.setShopName("修改后的店铺名称");
         String filePath = "E:\\学习\\java\\项目学习\\o2o\\src\\main\\resources\\image\\gakki2.jpg";
         ShopExecution shopExecution = shopService.modifyShop(shop,path2MultipartFile(filePath));

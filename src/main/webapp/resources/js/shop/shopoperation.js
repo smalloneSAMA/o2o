@@ -93,7 +93,7 @@ $(function () {
             shop.shopId = shopId;
         }
         shop.shopName = $('#shop-name').val();
-        shop.shopAddress = $('#shop-addr').val();
+        shop.shopAddress = $('#shop-address').val();
         shop.phone = $('#shop-phone').val();
         shop.shopDescription = $('#shop-description').val();
         shop.shopCategory = {
@@ -124,7 +124,7 @@ $(function () {
             processData: false,
             cache: false,
             success: function (data) {
-                if (data.success()) {
+                if (data.success ){
                     $.toast('提交成功!');
                 } else {
                     $.toast('提交失败!' + data.errMsg);

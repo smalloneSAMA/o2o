@@ -20,7 +20,7 @@ public class Shop {
     private Date createTime;
     private Date lastEditTime;
     //-1 不可用 0 审核中 1可用
-    private int enableStatus;
+    private Integer enableStatus;
     //超级管理员给店家的提醒
     private String advice;
     private Area area;
@@ -99,11 +99,11 @@ public class Shop {
         this.lastEditTime = lastEditTime;
     }
 
-    public int getEnableStatus() {
+    public Integer getEnableStatus() {
         return enableStatus;
     }
 
-    public void setEnableStatus(int enableStatus) {
+    public void setEnableStatus(Integer enableStatus) {
         this.enableStatus = enableStatus;
     }
 

@@ -30,7 +30,6 @@ public class ShopServiceImpl implements ShopService {
     @Autowired
     private ShopDao shopDao;
 
-
     @Override
     public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) {
         int rowIndex = PageCalculator.calculateRowIndex(pageIndex,pageSize);
@@ -83,7 +82,6 @@ public class ShopServiceImpl implements ShopService {
 
         return new ShopExecution(ShopStateEnum.CHECK,shop);
     }
-
 
     private void addShopImg(Shop shop, MultipartFile shopImg) {
         //获取shop图片目录的相对值路径
