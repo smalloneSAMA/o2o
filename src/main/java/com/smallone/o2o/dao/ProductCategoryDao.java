@@ -2,6 +2,7 @@ package com.smallone.o2o.dao;
 
 import com.smallone.o2o.entity.Product;
 import com.smallone.o2o.entity.ProductCategory;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,5 +21,15 @@ public interface ProductCategoryDao {
      * @return
      */
     List<ProductCategory> queryProductCategoryList(Long shopId);
+
+    /**
+     * 批量新增商品类别
+     * @param productCategoryList
+     * @return
+     */
+    Integer batchInsertProductCategory(List<ProductCategory> productCategoryList);
+
+
+    Integer deleteProductCategory(@Param("productCategoryId") Long productCategoryId,@Param("shopId") Long shopId);
 
 }

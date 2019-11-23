@@ -7,6 +7,7 @@ package com.smallone.o2o.enums;
  * @created 2019--11--22--22:42
  */
 public enum ProductCategoryStateEnum {
+    SUCCESS(-2000,"创建成功"),
     NULL_SHOP(-2001, "Shop信息为空"),
     EMPETY_LIST(-2002, "请输入商品目录信息"),
     DELETE_ERROR(-2003, "商品类别删除失败"),
