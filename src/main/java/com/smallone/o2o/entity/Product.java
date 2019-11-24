@@ -14,14 +14,15 @@ public class Product {
     private Long productId;
     private String productName;
     private String productDescription;
+    //缩略图
     private String imgAddress;
     private String normalPrice;
     private String promotionPrice;
     private Integer priority;
-    //0下架 1在前端展示
-    private Integer enableStatus;
     private Date createTime;
     private Date lastEditTime;
+    //0下架 1在前端展示
+    private Integer enableStatus;
 
     private List<ProductImg> productImgList;
     private ProductCategory productCategory;

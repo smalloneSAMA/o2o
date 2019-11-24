@@ -2,22 +2,18 @@ package com.smallone.o2o.service.impl;
 
 import com.smallone.o2o.dao.ShopDao;
 import com.smallone.o2o.dto.ShopExecution;
-import com.smallone.o2o.dto.ShopOperationExecution;
 import com.smallone.o2o.entity.Shop;
 import com.smallone.o2o.enums.ShopStateEnum;
 import com.smallone.o2o.exceptions.ShopOperationException;
 import com.smallone.o2o.service.ShopService;
-import com.smallone.o2o.util.ImageUtiil;
+import com.smallone.o2o.util.ImageUtil;
 import com.smallone.o2o.util.PageCalculator;
 import com.smallone.o2o.util.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -87,7 +83,7 @@ public class ShopServiceImpl implements ShopService {
         //获取shop图片目录的相对值路径
         String dest = PathUtil.getShopImagePath(shop.getShopId());
         //获取
-        String shopImgAddr = ImageUtiil.generateThumbnail(shopImg,dest);
+        String shopImgAddr = ImageUtil.generateThumbnail(shopImg,dest);
         shop.setShopImg(shopImgAddr);
     }
 
@@ -109,7 +105,7 @@ public class ShopServiceImpl implements ShopService {
                     Shop tempShop = shopDao.queryByShopId(shop.getShopId());
                     if(tempShop.getShopImg() != null){
                         //删除原先图片
-                        ImageUtiil.deleteFileOrPath(tempShop.getShopImg());
+                        ImageUtil.deleteFileOrPath(tempShop.getShopImg());
                     }
                     //添加新照片
                     addShopImg(shop,shopImg);
