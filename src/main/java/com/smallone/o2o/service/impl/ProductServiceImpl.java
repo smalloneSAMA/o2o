@@ -11,6 +11,7 @@ import com.smallone.o2o.enums.ProductStateEnum;
 import com.smallone.o2o.exceptions.ProductOperationException;
 import com.smallone.o2o.service.ProductService;
 import com.smallone.o2o.util.ImageUtil;
+import com.smallone.o2o.util.PageCalculator;
 import com.smallone.o2o.util.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,21 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
     @Autowired
     private ProductImgDao productImgDao;
+
+    @Override
+    public ProductExecution getProductList(Product productCondition, Integer pageIndex, Integer pageSize) {
+
+        Integer rowIndex =  PageCalculator.calculateRowIndex(pageIndex,pageSize);
+
+        List<Product> productList = productDao.selectProductList(productCondition,rowIndex,pageSize);
+        // 获取商品总数
+        int productCount = productDao.selectProductCount(productCondition);
+        // 构建返回对象,并设值
+        ProductExecution productExecution = new ProductExecution();
+        productExecution.setCount(productCount);
+        productExecution.setProductList(productList);
+        return productExecution;
+    }
 
     @Override
     @Transactional
@@ -70,6 +86,58 @@ public class ProductServiceImpl implements ProductService {
             return new ProductExecution(ProductStateEnum.EMPTY);
         }
 
+    }
+
+    @Override
+    public Product getProductById(Long productId) {
+        return productDao.queryProductByProductId(productId);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.tyron.o2o.service.ProductService#modifyProduct(com.tyron.o2o.entity.
+     * Product, org.springframework.web.multipart.MultipartFile, java.util.List)
+     */
+    // ①若缩略图参数有值，则先处理缩略图，先删除原有缩略图再添加
+    // ②若商品详情图参数有值，先删除后添加
+    // ③更新tb_product的信息
+    @Override
+    @Transactional
+    public ProductExecution modifyProduct(Product product, MultipartFile productImg, List<MultipartFile> productImgList) throws ProductOperationException {
+        // 空值判断
+        if (product != null && product.getShop() != null && product.getShop().getShopId() != null) {
+            // 设置默认更新时间
+            product.setLastEditTime(new Date());
+            // 若商品缩略图不为空且原有缩略图不为空，则先删除原有缩略图并添加
+            if (productImg != null) {
+                // 先获取原有信息，得到原有图片地址
+                Product origProduct = productDao.queryProductByProductId(product.getProductId());
+                if (origProduct.getImgAddress() != null) {
+                    ImageUtil.deleteFileOrPath(origProduct.getImgAddress());
+                }
+                addProductImg(product, productImg);
+            }
+
+            // 若存在新的商品详情图且原详情图不为空，则先删除原有详情图并添加
+            if (productImgList != null && !productImgList.isEmpty()) {
+                deleteProductImgList(product.getProductId());
+                addProductImgList(product, productImgList);
+            }
+
+            // 更新商品信息
+            try {
+                int effectNum = productDao.updateProduct(product);
+                if (effectNum <= 0) {
+                    throw new ProductOperationException(ProductStateEnum.EDIT_ERROR.getStateInfo());
+                }
+                return new ProductExecution(OperationStatusEnum.SUCCESS, product);
+            } catch (ProductOperationException e) {
+                throw new ProductOperationException(ProductStateEnum.EDIT_ERROR.getStateInfo() + e.getMessage());
+            }
+        } else {
+            return new ProductExecution(ProductStateEnum.EMPTY);
+        }
     }
 
     /**
@@ -114,6 +182,23 @@ public class ProductServiceImpl implements ProductService {
             } catch (Exception e) {
                 throw new ProductOperationException(OperationStatusEnum.PIC_UPLOAD_ERROR.getStateInfo() + e.toString());
             }
+        }
+    }
+    /**
+     * 删除某个商品下的详情图
+     *
+     * @param productId
+     */
+    private void deleteProductImgList(Long productId) {
+        // 根据productId获取原有的图片
+        List<ProductImg> productImgList = productImgDao.selectProductImgListByProductId(productId);
+        if (productImgList != null && !productImgList.isEmpty()) {
+            for (ProductImg productImg : productImgList) {
+                // 删除存的图片
+                ImageUtil.deleteFileOrPath(productImg.getImgAddress());
+            }
+            // 删除数据库中图片
+            productImgDao.deleteProductImgByProductId(productId);
         }
     }
 }

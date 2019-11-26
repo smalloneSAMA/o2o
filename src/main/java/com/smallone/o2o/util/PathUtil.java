@@ -31,6 +31,7 @@ public class PathUtil {
      * @return 根据业务不同 返回项目图片子路径
      */
     public static String getShopImagePath(long shopId){
+        //TODO 需要修改路径
         String imagePath = "upload/item/shop" + shopId + "/";
         return imagePath.replace("/",seperator);
     }
