@@ -1,20 +1,28 @@
 $(function() {
     var loading = false;
+    // 最大数量
     var maxItems = 20;
-    var pageSize = 10;
-
-    var listUrl = '/o2o/front/listproductsbyshop';
-
+    // 默认一页条数
+    var pageSize = 3;
+    // 列数商品列表的URL
+    var listUrl = '/o2o_war_exploded/frontend/listproductbyshop';
+    // 初始页码数
     var pageNum = 1;
+    // 获取shopId
     var shopId = getQueryString('shopId');
     var productCategoryId = '';
     var productName = '';
-
-    var searchDivUrl = '/o2o/front/listshopdetailpageinfo?shopId=' + shopId;
-
+    // 获取本店信息以及商品类别信息列表的URL
+    var searchDivUrl = '/o2o_war_exploded/frontend/listshopdetailpageinfo?shopId=' + shopId;
+    // 渲染出店铺基本信息以及商品类别列表以供搜索
     getSearchDivData();
+    // 预先加载商品信息
     addItems(pageSize, pageNum);
 
+    // 给兑换礼品的a标签赋值兑换礼品的URL，2.0版本
+    // $('#exchangelist').attr('href','/o2o_war_exploded/frontend/awardlist?shopId=' + shopId);
+
+    // 获取本店信息以及商品类别信息
     function getSearchDivData() {
         var url = searchDivUrl;
         $.getJSON(url,
@@ -24,13 +32,14 @@ $(function() {
                     $('#shop-cover-pic').attr('src', shop.shopImg);
                     $('#shop-update-time').html(new Date(shop.lastEditTime).Format("yyyy-MM-dd"));
                     $('#shop-name').html(shop.shopName);
-                    $('#shop-desc').html(shop.shopDesc);
-                    $('#shop-addr').html(shop.shopAddr);
+                    $('#shop-description').html(shop.shopDescription);
+                    $('#shop-address').html(shop.shopAddress);
                     $('#shop-phone').html(shop.phone);
 
                     // 店铺类别列表
                     var productCategoryList = data.productCategoryList;
                     var html = '';
+                    // 遍历商品列表，生成可以点击搜索相应商品类别下的商品的a标签
                     productCategoryList
                         .map(function(item, index) {
                             html += '<a href="#" class="button" data-product-search-id='
@@ -69,9 +78,9 @@ $(function() {
                         + '<div class="list-block media-list">' + '<ul>'
                         + '<li class="item-content">'
                         + '<div class="item-media">' + '<img src="'
-                        + item.imgAddr + '" width="44">' + '</div>'
+                        + item.imgAddress + '" width="44">' + '</div>'
                         + '<div class="item-inner">'
-                        + '<div class="item-subtitle">' + item.productDesc
+                        + '<div class="item-subtitle">' + item.productDescription
                         + '</div>' + '</div>' + '</li>' + '</ul>'
                         + '</div>' + '</div>' + '<div class="card-footer">'
                         + '<p class="color-gray">'
@@ -94,12 +103,14 @@ $(function() {
         });
     }
 
+    // 下滑屏幕自动进行分页搜索
     $(document).on('infinite', '.infinite-scroll-bottom', function() {
         if (loading)
             return;
         addItems(pageSize, pageNum);
     });
 
+    // 选择新商品类别，充值页码，清空原先商品列表
     $('#shopdetail-button-div').on(
         'click',
         '.button',
@@ -119,14 +130,16 @@ $(function() {
             }
         });
 
+    // 商品详情页码
     $('.list-div')
         .on('click',
             '.card',
             function(e) {
                 var productId = e.currentTarget.dataset.productId;
-                window.location.href = '/o2o/front/productdetail?productId='
+                window.location.href = '/o2o_war_exploded/frontend/productdetail?productId='
                     + productId;
             });
+
     // 需要查询的商品名发生变化后，重置页码，清空原先的商品列表，按照新的商品名去查询
     $('#search').on('change', function(e) {
         productName = e.target.value;

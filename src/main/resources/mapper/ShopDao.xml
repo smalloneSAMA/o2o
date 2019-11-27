@@ -58,13 +58,24 @@
                 and s.shop_category_id =
                 #{shopCondition.shopCategory.shopCategoryId}
             </if>
+            <if test="shopCondition.shopCategory != null
+            and shopCondition.shopCategory.parent !=null
+            and shopCondition.shopCategory.parent.shopCategoryId !=null">
+                and s.shop_category_id
+                in (
+                SELECT  shop_category_id from tb_shop_category
+                WHERE parent_id = #{shopCondition.shopCategory.parent.shopCategoryId}
+                 )
+            </if>
             <if test="shopCondition.area != null
             and shopCondition.area.areaId != null">
                 and s.area_id =
                 #{shopCondition.area.areaId}
             </if>
-            <if test="shopCondition.shopName != null">
-                and s.shop_name like '%${shopCondition.shopName}%'
+            <!-- 写like语句的时候 一般都会写成 like '% %' 在mybatis里面写就是应该是 like '%${name} %' 而不是
+				'%#{name} %' ${name} 是不带单引号的，而#{name} 是带单引号的 -->
+            <if test="shopCondition.shopName!=null">
+                and shop_name like '%${shopCondition.shopName}%'
             </if>
             <if test="shopCondition.enableStatus !=null">
                 and s.enable_status = #{shopCondition.enableStatus}
@@ -95,13 +106,24 @@
                 and s.shop_category_id =
                 #{shopCondition.shopCategory.shopCategoryId}
             </if>
+            <if test="shopCondition.shopCategory != null
+            and shopCondition.shopCategory.parent !=null
+            and shopCondition.shopCategory.parent.shopCategoryId !=null">
+                and s.shop_category_id
+                in (
+                SELECT  shop_category_id from tb_shop_category
+                WHERE parent_id = #{shopCondition.shopCategory.parent.shopCategoryId}
+                )
+            </if>
             <if test="shopCondition.area != null
             and shopCondition.area.areaId != null">
                 and s.area_id =
-                #{shopCondition.area.area_id}
+                #{shopCondition.area.areaId}
             </if>
-            <if test="shopCondition.shopName != null">
-                and s.shop_name like '%#{shopCondition.shopName}%'
+            <!-- 写like语句的时候 一般都会写成 like '% %' 在mybatis里面写就是应该是 like '%${name} %' 而不是
+				'%#{name} %' ${name} 是不带单引号的，而#{name} 是带单引号的 -->
+            <if test="shopCondition.shopName!=null">
+                and shop_name like '%${shopCondition.shopName}%'
             </if>
             <if test="shopCondition.enableStatus != null">
                 and s.enable_status = #{shopCondition.enableStatus}
