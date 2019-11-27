@@ -20,15 +20,20 @@ public class ShopCategoryDaoTest extends BaseTest {
 
     @Test
     public void queryShopCategory() {
+        //List<ShopCategory> shopCategoryList = shopCategoryDao.queryShopCategory(new ShopCategory());
+        //assertEquals(2,shopCategoryList.size());
+        //ShopCategory shopCategory = new ShopCategory();
+        //ShopCategory parent = new ShopCategory();
+        //parent.setShopCategoryId(2L);
+        //shopCategory.setParent(parent);
+        //shopCategoryList = shopCategoryDao.queryShopCategory(shopCategory);
+        //System.out.println(shopCategoryList.get(0).getShopCategoryDescription());
+        //assertEquals(1,shopCategoryList.size());
+
         List<ShopCategory> shopCategoryList = shopCategoryDao.queryShopCategory(new ShopCategory());
-        assertEquals(2,shopCategoryList.size());
-        ShopCategory shopCategory = new ShopCategory();
-        ShopCategory parent = new ShopCategory();
-        parent.setShopCategoryId(2L);
-        shopCategory.setParent(parent);
-        shopCategoryList = shopCategoryDao.queryShopCategory(shopCategory);
-        System.out.println(shopCategoryList.get(0).getShopCategoryDescription());
-        assertEquals(1,shopCategoryList.size());
+        System.out.println("查询数量为：" + shopCategoryList.size());
+
+
 
     }
 }
